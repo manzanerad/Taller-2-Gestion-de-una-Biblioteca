@@ -1,6 +1,6 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+package models;
+
+import java.io.*;
 
 public class Lector {
     private int id;
@@ -63,7 +63,7 @@ public class Lector {
         this.phoneNumber = phoneNumber;
     }
 
-    public static void crearUsuario(Lector lector) 
+    public static void crearUsuario(Lector lector)
     throws IOException {
         FileWriter fw = new FileWriter("lectores.csv", true);
         BufferedWriter bw = new BufferedWriter(fw);
@@ -72,8 +72,28 @@ public class Lector {
         bw.close();
     }
 
+    public static Lector buscarPorId(int id) throws IOException {
+        File file = new File("lectores.csv");
+        if (!file.exists()) return null;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length >= 3 && Integer.parseInt(datos[0].trim()) == id) {
+                    String phone = datos.length > 3 ? datos[3].trim() : "";
+                    return new Lector(id, datos[1].trim(), datos[2].trim(), phone);
+                }
+            }
+        }
+        return null;
+    }
+
+
     @Override
     public String toString() {
         return String.valueOf(this.id) + "," + this.name + "," + this.lastName + "," + this.phoneNumber;
     }
+
+
 }

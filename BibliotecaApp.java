@@ -1,5 +1,7 @@
+import models.Lector;
+import models.Prestamo;
 import java.io.IOException;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BibliotecaApp{
@@ -60,10 +62,41 @@ public class BibliotecaApp{
     static void eliminarLector(){
 
     }
-
+/*
     static void registrarPrestamo(){
-
+        try{
+        int id = 0;
+        int idLector = leerEntero("Dijite el ID del lector que presta el libro: ");
+        Lector lector = ;
+        String bookName = leerTexto("Dijite el nombre del libro: ");
+        String fechaPrestamo = leerTexto("Dijite la fecha del prestamo: ");
+        Prestamo pretamo = Prestamo.crearPrestamo(++id, lector, bookName, fechaPrestamo);
+        }
     }
+*/
+    static void registrarPrestamo() {
+        try {
+            int idLector = leerEntero("Digite el ID del lector que presta el libro: ");
+            Lector lector = Lector.buscarPorId(idLector);
+
+            if (lector == null) {
+                System.out.println("No se encontró un lector con ese ID.");
+                return;
+            }
+
+            String bookName = leerTexto("Digite el nombre del libro: ");
+            String fechaPrestamo = leerTexto("Digite la fecha del prestamo: ");
+
+            int id = 0;
+            Prestamo prestamo = new Prestamo(++id, lector, bookName, fechaPrestamo);
+            Prestamo.crearPrestamo(prestamo);
+            System.out.println("Préstamo registrado correctamente.");
+
+        } catch (IOException e) {
+            System.out.println("Error al leer los lectores: " + e.getMessage());
+        }
+    }
+
 
     static void listarPrestamoLector(){
 
