@@ -1,15 +1,16 @@
 package models;
-//import java.util.*;
-import java.io.*;
 
-public class Prestamo{
+import java.io.*;
+import java.util.*;
+
+public class Prestamo {
     private int id;
     private Lector lector;
     private String bookName;
     private String fechaPrestamo;
     private String fechaDevolucion;
 
-    public Prestamo(int id, Lector lector, String bookName, String fechaPrestamo){
+    public Prestamo(int id, Lector lector, String bookName, String fechaPrestamo) {
         this.lector = lector;
         this.bookName = bookName;
         this.fechaPrestamo = fechaPrestamo;
@@ -20,51 +21,35 @@ public class Prestamo{
         return id;
     }
 
-    public Lector getLector(){
+    public Lector getLector() {
         return lector;
     }
 
-    public String getBookName(){
+    public String getBookName() {
         return bookName;
     }
 
-    public void setId(int id){
-        this.id = id;
-    }
-
-    public void setLector(int idLector){
-        try{
-            Lector lector = Lector.buscarPorId(idLector);
-            if (lector == null){
-                throw new NullPointerException("No existe un lector con ese ID.");
-            }
-        } catch (IOException e){
-            System.out.println("Error al leer lectores.csv.");
-        }
-    }
-
-    public void setBookName(String bookName){
+    public void setBookName(String bookName) {
         this.bookName = bookName;
     }
 
-    public String getFechaPrestamo(){
+    public String getFechaPrestamo() {
         return fechaPrestamo;
     }
 
-    public void setFechaPrestamo(String fechaPrestamo){
+    public void setFechaPrestamo(String fechaPrestamo) {
         this.fechaPrestamo = fechaPrestamo;
     }
 
-    public String getFechaDevolucion(){
+    public String getFechaDevolucion() {
         return fechaDevolucion;
     }
 
-    public void setFechaDevolucion(String fechaDevolucion){
+    public void setFechaDevolucion(String fechaDevolucion) {
         this.fechaDevolucion = fechaDevolucion;
     }
 
-    public static void crearPrestamo(Prestamo prestamo)
-    throws IOException {
+    public static void crearPrestamo(Prestamo prestamo) throws IOException {
         FileWriter fw = new FileWriter("prestamos.csv", true);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(prestamo.toString());
@@ -72,4 +57,40 @@ public class Prestamo{
         bw.close();
     }
 
+    public static List<Prestamo> buscarPorIdLector(int idLector) {
+        List<Prestamo> prestamos = new ArrayList<>();
+        File file = new File("prestamos.csv");
+
+        if (!file.exists()) {
+            return prestamos;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length >= 5 && Integer.parseInt(datos[1].trim()) == idLector) {
+                    int id = Integer.parseInt(datos[0].trim());
+                    int idLec = Integer.parseInt(datos[1].trim());
+                    String bookName = datos[2].trim();
+                    String fechaPrestamo = datos[3].trim();
+                    String fechaDevolucion = datos[4].trim();
+
+                    Lector lector = new Lector(idLec, "", "");
+                    Prestamo p = new Prestamo(id, lector, bookName, fechaPrestamo);
+                    p.setFechaDevolucion(fechaDevolucion);
+                    prestamos.add(p);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error al leer préstamos: " + e.getMessage());
+        }
+
+        return prestamos;
+    }
+
+    @Override
+    public String toString() {
+        return id + "," + lector.getId() + "," + bookName + "," + fechaPrestamo + "," + (fechaDevolucion != null ? fechaDevolucion : "");
+    }
 }
