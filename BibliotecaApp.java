@@ -19,13 +19,32 @@ public class BibliotecaApp{
                 case 3 -> eliminarLector();
                 case 4 -> registrarPrestamo();
                 case 5 -> listarPrestamoLector();
-                case 6 -> System.out.println("Cerrando el sistema. Hasta pronto.");
+                case 6 -> mostrarConsultas();
+                case 7 -> System.out.println("Cerrando el sistema. Hasta pronto.");
                 default -> System.out.println("Opción inválida. Intente de nuevo.");
             }
             System.out.println();
-        } while (opcion != 6);
+        } while (opcion != 7);
 
         sc.close();
+    }
+
+    static void menuConsultas() {
+        int opcion;
+        do{
+            mostrarConsultas();
+            opcion = leerEntero("Seleccione una opcion: ");
+
+            switch(opcion){
+                case 1 -> historialLector();
+                case 2 -> lectoresConMayorPrestamos();
+                case 3 -> librosPrestados();
+                case 4 -> reporteLectoresPrestamos();
+                case 5 -> reportePrestamosVencidos();
+                case 6 -> main(null);
+                default -> System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (opcion != 6);
     }
 
     static void mostrarMenu() {
@@ -35,7 +54,17 @@ public class BibliotecaApp{
         System.out.println("3. Eliminar lector");
         System.out.println("4. Registrar prestamo");
         System.out.println("5. Listar prestamos de lector");
-        System.out.println("6. Salir");
+        System.out.println("6. Consultas");
+        System.out.println("7. Salir");
+    }
+
+    static void mostrarConsultas(){
+        System.out.println("1. Historial completo de un lector");
+        System.out.println("2. Lectores con mayor cantidad de préstamos");
+        System.out.println("3. Libros actualmente prestados");
+        System.out.println("4. Generar reporte de lectores con préstamos activos");
+        System.out.println("5. Generar reporte de préstamos vencidos");
+        System.out.println("6. Volver al menú principal");
     }
 
     static void registrarLector(){
@@ -74,11 +103,13 @@ public class BibliotecaApp{
 
             String bookName = leerTexto("Digite el nombre del libro: ");
             String fechaPrestamo = leerTexto("Digite la fecha del prestamo: ");
+            String fechaDevolucion = leerTexto("Digite la fecha de devolucion (opcional): ");
 
             int id = 0;
             Prestamo prestamo = new Prestamo(++id, lector, bookName, fechaPrestamo);
             Prestamo.crearPrestamo(prestamo);
             System.out.println("Préstamo registrado correctamente.");
+
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -113,6 +144,49 @@ public class BibliotecaApp{
             System.out.println("----------------------------------------");
         }
     }
+
+
+    static void historialLector() {
+            try {
+                int idLector = leerEntero("Ingrese el ID del lector: ");
+                Lector lector = Lector.buscarPorId(idLector);
+
+                if (lector == null) {
+                    throw new IllegalArgumentException("El lector con ID " + idLector + " no existe.");
+                }
+
+                System.out.println("ID: " + lector.getId());
+                System.out.println("Nombre: " + lector.getName() + " " + lector.getLastName());
+                System.out.println("Teléfono: " + lector.getPhoneNumber());
+
+                List<Prestamo> prestamos = Prestamo.buscarPorIdLector(idLector);
+                for (int i = 1; i < prestamos.size(); i++) {
+                    Prestamo actual = prestamos.get(i);
+                    int j = i - 1;
+                    while (j >= 0 && prestamos.get(j).getFechaPrestamo().compareTo(actual.getFechaPrestamo()) > 0) {
+                        prestamos.set(j + 1, prestamos.get(j));
+                        j--;
+                    }
+                    prestamos.set(j + 1, actual);
+                }
+
+                int activos = 0, devueltos = 0;
+                System.out.println("\nID\tLibro\t\tFecha préstamo\tEstado");
+                for (Prestamo p : prestamos) {
+                    String estado = (p.getFechaDevolucion() == null || p.getFechaDevolucion().trim().isEmpty()) ? "ACTIVO" : "DEVUELTO";
+                    if (estado.equals("ACTIVO")) activos++;
+                    else devueltos++;
+                    System.out.println(p.getId() + "\t" + p.getBookName() + "\t" + p.getFechaPrestamo() + "\t" + estado);
+                }
+
+                System.out.println("\nTotal de préstamos: " + prestamos.size());
+                System.out.println("Préstamos activos: " + activos);
+                System.out.println("Préstamos devueltos: " + devueltos);
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error de validación: " + e.getMessage());
+            }
+        }
 
 
 
