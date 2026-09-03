@@ -1,5 +1,7 @@
-import java.io.IOException;
-import java.util.Scanner;
+import models.Lector;
+import models.Prestamo;
+import java.io.*;
+import java.util.*;
 
 public class BibliotecaApp{
 
@@ -59,12 +61,56 @@ public class BibliotecaApp{
 
     }
 
-    static void registrarPrestamo(){
+    static void registrarPrestamo() {
+        try {
+            int idLector = leerEntero("Digite el ID del lector que presta el libro: ");
+            Lector lector = Lector.buscarPorId(idLector);
 
+            if (lector == null) {
+                System.out.println("No se encontró un lector con ese ID.");
+                return;
+            }
+
+            String bookName = leerTexto("Digite el nombre del libro: ");
+            String fechaPrestamo = leerTexto("Digite la fecha del prestamo: ");
+
+            int id = 0;
+            Prestamo prestamo = new Prestamo(++id, lector, bookName, fechaPrestamo);
+            Prestamo.crearPrestamo(prestamo);
+            System.out.println("Préstamo registrado correctamente.");
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    static void listarPrestamoLector(){
 
+
+    static void listarPrestamoLector() {
+        int idLector = leerEntero("Digite el ID del lector: ");
+        Lector lector = Lector.buscarPorId(idLector);
+
+        if (lector == null) {
+            System.out.println("El lector no existe.");
+            return;
+        }
+
+        List<Prestamo> prestamos = Prestamo.buscarPorIdLector(idLector);
+
+        if (prestamos.isEmpty()) {
+            System.out.println("No existen préstamos asociados a este lector.");
+            return;
+        }
+
+        System.out.println("=== Préstamos del lector " + lector.getName() + " " + lector.getLastName() + " ===");
+        for (Prestamo p : prestamos) {
+            System.out.println("ID del préstamo: " + p.getId());
+            System.out.println("ID del lector: " + p.getLector().getId());
+            System.out.println("Nombre del libro: " + p.getBookName());
+            System.out.println("Fecha del préstamo: " + p.getFechaPrestamo());
+            System.out.println("Fecha de devolución: " + (p.getFechaDevolucion() != null && !p.getFechaDevolucion().isEmpty() ? p.getFechaDevolucion() : "No registrada"));
+            System.out.println("----------------------------------------");
+        }
     }
 
 
