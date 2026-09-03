@@ -62,7 +62,6 @@ public class Lector {
         }
     }
 
-    // Método que soluciona el error al buscar un lector por su ID desde el archivo CSV
     public static Lector buscarPorId(int idBuscado) {
         File file = new File("lectores.csv");
         if (!file.exists()) {
@@ -81,7 +80,7 @@ public class Lector {
                         String phoneNumber = datos[3].trim();
 
                         Lector lector = new Lector(name, lastName, phoneNumber);
-                        lector.setId(id); // Asigna el ID exacto registrado en el archivo
+                        lector.setId(id);
                         return lector;
                     }
                 }
@@ -101,7 +100,6 @@ public class Lector {
 
         boolean encontrado = false;
 
-        // 1. Reescribimos lectores.csv omitiendo el ID eliminado
         try (BufferedReader br = new BufferedReader(new FileReader(archivoOriginal));
             BufferedWriter bw = new BufferedWriter(new FileWriter(archivoTemporal))) {
 
@@ -112,7 +110,7 @@ public class Lector {
                     int id = Integer.parseInt(datos[0].trim());
                     if (id == idAEliminar) {
                         encontrado = true;
-                        continue; // Salta esta línea (no la copia)
+                        continue;
                     }
                 }
                 bw.write(linea);
@@ -124,11 +122,10 @@ public class Lector {
             return false;
         }
 
-        // 2. Si se encontró, reemplazamos el CSV y actualizamos el archivo de índice
         if (encontrado) {
             if (archivoOriginal.delete()) {
                 archivoTemporal.renameTo(archivoOriginal);
-                generarIndiceLectores(); // <--- Reconstrucción del índice
+                generarIndiceLectores();
             }
         } else {
             archivoTemporal.delete();

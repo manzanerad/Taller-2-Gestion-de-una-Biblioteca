@@ -84,7 +84,6 @@ public class Prestamo {
                     String fechaPrestamo = datos[3].trim();
                     String fechaDevolucion = datos.length > 4 ? datos[4].trim() : "";
 
-                    // Intentamos buscar al lector real; si no se encuentra, creamos la referencia básica
                     Lector lector = Lector.buscarPorId(idLec);
                     if (lector == null) {
                         lector = new Lector("Lector", "Registrado", "");

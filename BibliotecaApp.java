@@ -121,6 +121,106 @@ public class BibliotecaApp {
         }
     }
 
+    static void consultarLectoresConMasPrestamos() {
+        File archivoLectores = new File("lectores.csv");
+        File archivoPrestamos = new File("prestamos.csv");
+
+        try {
+            if (!archivoLectores.exists()) {
+                throw new FileNotFoundException("El archivo lectores.csv no existe.");
+            }
+
+            List<LectorResumen> lista = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(archivoLectores))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] datos = linea.split(",");
+                    if (datos.length >= 4) {
+                        try {
+                            int id = Integer.parseInt(datos[0].trim());
+                            String nombre = datos[1].trim() + " " + datos[2].trim();
+                            lista.add(new LectorResumen(id, nombre));
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                }
+            }
+
+            if (lista.isEmpty()) {
+                throw new IllegalArgumentException("No hay lectores registrados para realizar la consulta.");
+            }
+
+            if (archivoPrestamos.exists()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(archivoPrestamos))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] datos = linea.split(",");
+                        if (datos.length >= 4) {
+                            try {
+                                int idLector = Integer.parseInt(datos[1].trim());
+                                boolean devuelto = datos.length >= 5 && !datos[4].trim().isEmpty();
+
+                                for (LectorResumen r : lista) {
+                                    if (r.id == idLector) {
+                                        r.total++;
+                                        if (devuelto) {
+                                            r.devueltos++;
+                                        } else {
+                                            r.activos++;
+                                        }
+                                        break;
+                                    }
+                                }
+                            } catch (NumberFormatException e) {
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < lista.size() - 1; i++) {
+                for (int j = 0; j < lista.size() - 1 - i; j++) {
+                    LectorResumen a = lista.get(j);
+                    LectorResumen b = lista.get(j + 1);
+
+                    boolean intercambiar = false;
+
+                    if (b.total > a.total) {
+                        intercambiar = true;
+                    } else if (b.total == a.total) {
+                        if (b.id < a.id) {
+                            intercambiar = true;
+                        }
+                    }
+
+                    if (intercambiar) {
+                        lista.set(j, b);
+                        lista.set(j + 1, a);
+                    }
+                }
+            }
+
+            System.out.println("=========================================");
+            System.out.println("       LECTORES CON MÁS PRÉSTAMOS        ");
+            System.out.println("=========================================");
+            System.out.printf("%-5s %-20s %-7s %-9s %-9s\n", "ID", "Lector", "Total", "Activos", "Devueltos");
+            System.out.println("-----------------------------------------");
+
+            for (LectorResumen r : lista) {
+                System.out.printf("%-5d %-20s %-7d %-9d %-9d\n", r.id, r.nombreCompleto, r.total, r.activos, r.devueltos);
+            }
+
+        } catch (FileNotFoundException | IllegalArgumentException e) {
+            System.out.println("Error de consulta: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error de lectura de archivo: " + e.getMessage());
+        }
+    }
+
+
+
+
     // ====== Utilidades ======
 
     static int leerEntero(String msg) {
