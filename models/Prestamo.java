@@ -76,8 +76,13 @@ public class Prestamo {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String linea;
             while ((linea = br.readLine()) != null) {
+<<<<<<< HEAD
+                String[] datos = linea.split(",", -1);
+                if (datos.length >= 5 && Integer.parseInt(datos[1].trim()) == idLector) {
+=======
                 String[] datos = linea.split(",");
                 if (datos.length >= 4 && Integer.parseInt(datos[1].trim()) == idLector) {
+>>>>>>> 41f20c5606fff2fb93112b78c2837bb9a42bd1f2
                     int id = Integer.parseInt(datos[0].trim());
                     int idLec = Integer.parseInt(datos[1].trim());
                     String bookName = datos[2].trim();
@@ -104,6 +109,11 @@ public class Prestamo {
 
     @Override
     public String toString() {
-        return id + "," + lector.getId() + "," + bookName + "," + fechaPrestamo + "," + (fechaDevolucion != null ? fechaDevolucion : "");
+        return id + "," + lector.getId() + "," + bookName + "," + fechaPrestamo + "," + fechaDevolucion;
     }
+<<<<<<< HEAD
+
 }
+=======
+}
+>>>>>>> 41f20c5606fff2fb93112b78c2837bb9a42bd1f2
