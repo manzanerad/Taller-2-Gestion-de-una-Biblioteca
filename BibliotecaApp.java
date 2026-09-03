@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BibliotecaApp{
@@ -39,11 +38,10 @@ public class BibliotecaApp{
 
     static void registrarLector(){
         try {
-            int idSec = 0;
             String name = BibliotecaApp.leerTexto("Digite el nombre del usuario: ");
             String lastName = BibliotecaApp.leerTexto("Digite el apellido del usuario: ");
             String phoneNumber = BibliotecaApp.leerTexto("Digite el teléfono del usuario: ");
-            Lector u = new Lector(++idSec, name, lastName, phoneNumber);
+            Lector u = new Lector(name, lastName, phoneNumber);
             Lector.crearUsuario(u);
             System.out.println(u);
         } catch (IllegalArgumentException e) {

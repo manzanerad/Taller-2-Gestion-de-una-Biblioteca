@@ -3,15 +3,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Lector {
+    private static int contadorId = 0;
     private int id;
     private String name;
     private String lastName;
     private String phoneNumber;
 
-    public Lector(int id, String name, String lastName, String phoneNumber) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
+    public Lector(String name, String lastName, String phoneNumber) {
+        this.id = ++contadorId;
+        setName(name);
+        setLastName(lastName);
         this.phoneNumber = phoneNumber;
     }
 
@@ -19,14 +20,6 @@ public class Lector {
     public int getId() {
         return id;
     }
-
-
-    public Lector(int id, String name, String lastName) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-    }
-
 
     public void setId(int id) {
         this.id = id;
@@ -51,6 +44,8 @@ public class Lector {
 
 
     public void setLastName(String lastName) {
+        if (!Character.isUpperCase(lastName.charAt(0)))
+            throw new IllegalArgumentException("Debe digitar el apellido con la primera letra en mayúscula");
         this.lastName = lastName;
     }
 
