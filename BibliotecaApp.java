@@ -3,11 +3,11 @@ import models.Prestamo;
 import java.io.*;
 import java.util.*;
 
-public class BibliotecaApp{
+public class BibliotecaApp {
 
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         int opcion;
         do {
             mostrarMenu();
@@ -38,7 +38,7 @@ public class BibliotecaApp{
         System.out.println("6. Salir");
     }
 
-    static void registrarLector(){
+    static void registrarLector() {
         try {
             String name = BibliotecaApp.leerTexto("Digite el nombre del usuario: ");
             String lastName = BibliotecaApp.leerTexto("Digite el apellido del usuario: ");
@@ -53,11 +53,11 @@ public class BibliotecaApp{
         }
     }
 
-    static void listarLectores(){
+    static void listarLectores() {
 
     }
 
-    static void eliminarLector(){
+    static void eliminarLector() {
 
     }
 
@@ -74,8 +74,8 @@ public class BibliotecaApp{
             String bookName = leerTexto("Digite el nombre del libro: ");
             String fechaPrestamo = leerTexto("Digite la fecha del prestamo: ");
 
-            int id = 0;
-            Prestamo prestamo = new Prestamo(++id, lector, bookName, fechaPrestamo);
+            // Instanciación limpia sin gestionar variable id
+            Prestamo prestamo = new Prestamo(lector, bookName, fechaPrestamo);
             Prestamo.crearPrestamo(prestamo);
             System.out.println("Préstamo registrado correctamente.");
 
@@ -83,8 +83,6 @@ public class BibliotecaApp{
             System.out.println(e.getMessage());
         }
     }
-
-
 
     static void listarPrestamoLector() {
         int idLector = leerEntero("Digite el ID del lector: ");
@@ -113,10 +111,7 @@ public class BibliotecaApp{
         }
     }
 
-
-
-
-    // ====== Utilidades (ya implementadas, no es necesario modificarlas) ======
+    // ====== Utilidades ======
 
     static int leerEntero(String msg) {
         while (true) {
