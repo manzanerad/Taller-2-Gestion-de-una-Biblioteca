@@ -58,7 +58,17 @@ public class BibliotecaApp {
     }
 
     static void eliminarLector() {
-
+        int id = leerEntero("Digite el ID del lector a eliminar: ");
+        Lector lector = Lector.buscarPorId(id);
+        if (lector == null) {
+            System.out.println("El lector con ID " + id + " no existe.");
+            return;
+        }
+        if (Lector.eliminarLector(id)) {
+            System.out.println("Lector eliminado y archivo de índices actualizado correctamente.");
+        } else {
+            System.out.println("No se pudo eliminar el lector.");
+        }
     }
 
     static void registrarPrestamo() {

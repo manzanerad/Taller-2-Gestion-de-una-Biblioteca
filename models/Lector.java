@@ -93,6 +93,80 @@ public class Lector {
         return null;
     }
 
+    public static boolean eliminarLector(int idAEliminar) {
+    File archivoOriginal = new File("lectores.csv");
+    File archivoTemporal = new File("lectores_temp.csv");
+
+    if (!archivoOriginal.exists()) return false;
+
+    boolean encontrado = false;
+
+    // 1. Reescribimos lectores.csv omitiendo el ID eliminado
+    try (BufferedReader br = new BufferedReader(new FileReader(archivoOriginal));
+         BufferedWriter bw = new BufferedWriter(new FileWriter(archivoTemporal))) {
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+            if (datos.length >= 4) {
+                int id = Integer.parseInt(datos[0].trim());
+                if (id == idAEliminar) {
+                    encontrado = true;
+                    continue; // Salta esta línea (no la copia)
+                }
+            }
+            bw.write(linea);
+            bw.newLine();
+        }
+
+    } catch (IOException | NumberFormatException e) {
+        System.out.println("Error al procesar archivo: " + e.getMessage());
+        return false;
+    }
+
+    // 2. Si se encontró, reemplazamos el CSV y actualizamos el archivo de índice
+    if (encontrado) {
+        if (archivoOriginal.delete()) {
+            archivoTemporal.renameTo(archivoOriginal);
+            generarIndiceLectores(); // <--- Reconstrucción del índice
+        }
+    } else {
+        archivoTemporal.delete();
+    }
+
+    return encontrado;
+}
+
+// Método auxiliar para generar/actualizar el archivo de índices
+public static void generarIndiceLectores() {
+    File archivoLectores = new File("lectores.csv");
+    File archivoIndice = new File("lectores_index.csv");
+
+    if (!archivoLectores.exists()) return;
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivoLectores));
+         BufferedWriter bw = new BufferedWriter(new FileWriter(archivoIndice))) {
+
+        String linea;
+        long posicionByte = 0; // Guardará el desplazamiento (offset) en bytes
+
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+            if (datos.length >= 4) {
+                int id = Integer.parseInt(datos[0].trim());
+                
+                // Guardamos en el archivo de índice: ID,PosicionByte
+                bw.write(id + "," + posicionByte);
+                bw.newLine();
+            }
+            // Calculamos cuántos bytes ocupa la línea actual + salto de línea
+            posicionByte += linea.getBytes().length + System.lineSeparator().getBytes().length;
+        }
+    } catch (IOException | NumberFormatException e) {
+        System.out.println("Error reindexando: " + e.getMessage());
+    }
+}
+
     @Override
     public String toString() {
         return this.id + "," + this.name + "," + this.lastName + "," + this.phoneNumber;
