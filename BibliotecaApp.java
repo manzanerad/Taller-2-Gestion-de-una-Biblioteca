@@ -54,7 +54,7 @@ public class BibliotecaApp {
     }
 
     static void listarLectores() {
-
+        Lector.listarTodos();
     }
 
     static void eliminarLector() {
