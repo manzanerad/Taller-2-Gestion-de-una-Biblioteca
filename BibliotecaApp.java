@@ -152,7 +152,7 @@ public class BibliotecaApp {
         }
     }
 
-<<<<<<< HEAD
+
     static void consultarLectoresConMasPrestamos() {
         File archivoLectores = new File("lectores.csv");
         File archivoPrestamos = new File("prestamos.csv");
