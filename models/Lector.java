@@ -1,23 +1,20 @@
 package models;
+
 import java.io.*;
 
 public class Lector {
+    private static int contadorId = 0;
+
     private int id;
     private String name;
     private String lastName;
     private String phoneNumber;
 
-    public Lector(int id, String name, String lastName, String phoneNumber) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
+    public Lector(String name, String lastName, String phoneNumber) {
+        this.id = ++contadorId;
+        setName(name);
+        setLastName(lastName);
         this.phoneNumber = phoneNumber;
-    }
-
-    public Lector(int id, String name, String lastName) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
     }
 
     public int getId() {
@@ -33,8 +30,9 @@ public class Lector {
     }
 
     public void setName(String name) {
-        if (!Character.isUpperCase(name.charAt(0)))
+        if (name == null || name.isEmpty() || !Character.isUpperCase(name.charAt(0))) {
             throw new IllegalArgumentException("Debe digitar el nombre con la primera letra en mayúscula");
+        }
         this.name = name;
     }
 
@@ -43,6 +41,9 @@ public class Lector {
     }
 
     public void setLastName(String lastName) {
+        if (lastName == null || lastName.isEmpty() || !Character.isUpperCase(lastName.charAt(0))) {
+            throw new IllegalArgumentException("Debe digitar el apellido con la primera letra en mayúscula");
+        }
         this.lastName = lastName;
     }
 
@@ -55,14 +56,14 @@ public class Lector {
     }
 
     public static void crearUsuario(Lector lector) throws IOException {
-        FileWriter fw = new FileWriter("lectores.csv", true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(lector.toString());
-        bw.newLine();
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("lectores.csv", true))) {
+            bw.write(lector.toString());
+            bw.newLine();
+        }
     }
 
-    public static Lector buscarPorId(int id) {
+    // Método que soluciona el error al buscar un lector por su ID desde el archivo CSV
+    public static Lector buscarPorId(int idBuscado) {
         File file = new File("lectores.csv");
         if (!file.exists()) {
             return null;
@@ -72,9 +73,17 @@ public class Lector {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String[] datos = linea.split(",");
-                if (datos.length >= 3 && Integer.parseInt(datos[0].trim()) == id) {
-                    String phone = datos.length > 3 ? datos[3].trim() : "";
-                    return new Lector(id, datos[1].trim(), datos[2].trim(), phone);
+                if (datos.length >= 4) {
+                    int id = Integer.parseInt(datos[0].trim());
+                    if (id == idBuscado) {
+                        String name = datos[1].trim();
+                        String lastName = datos[2].trim();
+                        String phoneNumber = datos[3].trim();
+
+                        Lector lector = new Lector(name, lastName, phoneNumber);
+                        lector.setId(id); // Asigna el ID exacto registrado en el archivo
+                        return lector;
+                    }
                 }
             }
         } catch (IOException | NumberFormatException e) {
@@ -86,6 +95,6 @@ public class Lector {
 
     @Override
     public String toString() {
-        return String.valueOf(this.id) + "," + this.name + "," + this.lastName + "," + this.phoneNumber;
+        return this.id + "," + this.name + "," + this.lastName + "," + this.phoneNumber;
     }
 }
