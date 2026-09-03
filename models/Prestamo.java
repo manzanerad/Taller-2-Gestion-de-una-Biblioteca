@@ -4,17 +4,25 @@ import java.io.*;
 import java.util.*;
 
 public class Prestamo {
+    private static int contadorId = 0;
     private int id;
     private Lector lector;
     private String bookName;
     private String fechaPrestamo;
     private String fechaDevolucion;
 
-    public Prestamo(int id, Lector lector, String bookName, String fechaPrestamo) {
+    public Prestamo(Lector lector, String bookName, String fechaPrestamo) {
         this.lector = lector;
         this.bookName = bookName;
         this.fechaPrestamo = fechaPrestamo;
+        this.id = ++contadorId;
+    }
+
+    private Prestamo(int id, Lector lector, String bookName, String fechaPrestamo) {
         this.id = id;
+        this.lector = lector;
+        this.bookName = bookName;
+        this.fechaPrestamo = fechaPrestamo;
     }
 
     public int getId() {
@@ -68,15 +76,26 @@ public class Prestamo {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String linea;
             while ((linea = br.readLine()) != null) {
+<<<<<<< HEAD
                 String[] datos = linea.split(",", -1);
                 if (datos.length >= 5 && Integer.parseInt(datos[1].trim()) == idLector) {
+=======
+                String[] datos = linea.split(",");
+                if (datos.length >= 4 && Integer.parseInt(datos[1].trim()) == idLector) {
+>>>>>>> 41f20c5606fff2fb93112b78c2837bb9a42bd1f2
                     int id = Integer.parseInt(datos[0].trim());
                     int idLec = Integer.parseInt(datos[1].trim());
                     String bookName = datos[2].trim();
                     String fechaPrestamo = datos[3].trim();
-                    String fechaDevolucion = datos[4].trim();
+                    String fechaDevolucion = datos.length > 4 ? datos[4].trim() : "";
 
-                    Lector lector = new Lector(idLec, "", "");
+                    // Intentamos buscar al lector real; si no se encuentra, creamos la referencia básica
+                    Lector lector = Lector.buscarPorId(idLec);
+                    if (lector == null) {
+                        lector = new Lector("Lector", "Registrado", "");
+                        lector.setId(idLec);
+                    }
+
                     Prestamo p = new Prestamo(id, lector, bookName, fechaPrestamo);
                     p.setFechaDevolucion(fechaDevolucion);
                     prestamos.add(p);
@@ -93,5 +112,9 @@ public class Prestamo {
     public String toString() {
         return id + "," + lector.getId() + "," + bookName + "," + fechaPrestamo + "," + fechaDevolucion;
     }
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> 41f20c5606fff2fb93112b78c2837bb9a42bd1f2

@@ -3,11 +3,11 @@ import models.Prestamo;
 import java.io.*;
 import java.util.*;
 
-public class BibliotecaApp{
+public class BibliotecaApp {
 
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         int opcion;
         do {
             mostrarMenu();
@@ -67,13 +67,12 @@ public class BibliotecaApp{
         System.out.println("6. Volver al menú principal");
     }
 
-    static void registrarLector(){
+    static void registrarLector() {
         try {
-            int idSec = 0;
             String name = BibliotecaApp.leerTexto("Digite el nombre del usuario: ");
             String lastName = BibliotecaApp.leerTexto("Digite el apellido del usuario: ");
             String phoneNumber = BibliotecaApp.leerTexto("Digite el teléfono del usuario: ");
-            Lector u = new Lector(++idSec, name, lastName, phoneNumber);
+            Lector u = new Lector(name, lastName, phoneNumber);
             Lector.crearUsuario(u);
             System.out.println(u);
         } catch (IllegalArgumentException e) {
@@ -83,11 +82,11 @@ public class BibliotecaApp{
         }
     }
 
-    static void listarLectores(){
+    static void listarLectores() {
 
     }
 
-    static void eliminarLector(){
+    static void eliminarLector() {
 
     }
 
@@ -105,8 +104,8 @@ public class BibliotecaApp{
             String fechaPrestamo = leerTexto("Digite la fecha del prestamo: ");
             String fechaDevolucion = leerTexto("Digite la fecha de devolucion (opcional): ");
 
-            int id = 0;
-            Prestamo prestamo = new Prestamo(++id, lector, bookName, fechaPrestamo);
+            // Instanciación limpia sin gestionar variable id
+            Prestamo prestamo = new Prestamo(lector, bookName, fechaPrestamo);
             Prestamo.crearPrestamo(prestamo);
             System.out.println("Préstamo registrado correctamente.");
 
@@ -115,8 +114,6 @@ public class BibliotecaApp{
             System.out.println(e.getMessage());
         }
     }
-
-
 
     static void listarPrestamoLector() {
         int idLector = leerEntero("Digite el ID del lector: ");
@@ -145,6 +142,7 @@ public class BibliotecaApp{
         }
     }
 
+<<<<<<< HEAD
 
     static void historialLector() {
             try {
@@ -192,6 +190,9 @@ public class BibliotecaApp{
 
 
     // ====== Utilidades (ya implementadas, no es necesario modificarlas) ======
+=======
+    // ====== Utilidades ======
+>>>>>>> 41f20c5606fff2fb93112b78c2837bb9a42bd1f2
 
     static int leerEntero(String msg) {
         while (true) {
